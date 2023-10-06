@@ -1,7 +1,3 @@
-Of course! Here's the README with added instructions on how to invite the bot to a Discord server:
-
----
-
 # Discord Reminder Bot
 
 A Discord bot designed to set reminders for users in a server.
@@ -93,15 +89,3 @@ A Discord bot designed to set reminders for users in a server.
    ```bash
    !check
    ```
-
-## Contributing
-
-If you'd like to contribute, please fork the repository and use a feature branch. Pull requests are warmly welcome.
-
-## License
-
-[Your chosen license, e.g., MIT]
-
----
-
-This version of the README includes a new section on how to invite the bot to a Discord server, guiding users through the process step by step.
