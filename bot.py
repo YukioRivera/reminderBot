@@ -2,7 +2,7 @@
 # docker stop discord-reminder-bot
 # docker rm discord-reminder-bot
 # docker build -t discord-reminder-bot-image .
-# docker run --name discord-reminder-bot -p 8000:8000 -e "DISCORD_BOT_TOKEN=MTE0NTE5ODY5OTEzMjIzNTg0OA.Gsuw4c.3YQe-EtY5vjol_2LO8jkHy99EjZu0IV6fHwV5A" discord-reminder-bot-image python -u bot.py
+# docker run --name discord-reminder-bot -p 8000:8000 -e "DISCORD_BOT_TOKEN=discord_token" discord-reminder-bot-image python -u bot.py
 
 import os
 import discord
