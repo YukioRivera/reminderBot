@@ -8,12 +8,12 @@ class ReminderManager:
         self.reminders = []
         self.bot = bot
 
-    async def create_reminder(self, ctx, date, time):
+    async def create_reminder(self, ctx, date, time, name):
         try:
             # Convert the date and time strings to a datetime object
             reminder_datetime = datetime.strptime(f"{date} {time}", '%Y-%m-%d %H:%M')
-            self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime})
-            await ctx.send(f"Reminder set for {reminder_datetime.strftime('%Y-%m-%d %H:%M')}!")
+            self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime, 'name': name})
+            await ctx.send(f"Reminder '{name}' set for {reminder_datetime.strftime('%Y-%m-%d %H:%M')}!")
         except ValueError:
             await ctx.send("Invalid date or time format. Please use YYYY-MM-DD HH:MM format.")
 
@@ -22,7 +22,7 @@ class ReminderManager:
             await ctx.send("No reminders set.")
             return
             
-        reminder_list = "\n".join([f"{r['datetime'].strftime('%B %d, %Y at %H:%M')} for {r['ctx'].author.name}" for r in self.reminders])
+        reminder_list = "\n".join([f"'{r['name']}' on {r['datetime'].strftime('%B %d, %Y at %H:%M')}" for r in self.reminders])
         await ctx.send(f"Reminders:\n{reminder_list}")
 
 
@@ -40,11 +40,10 @@ class ReminderManager:
             
             print(f"Reminder time minus 2 hours: {reminder_str}")  # Print the string format
             print(f"Current time: {now_str}")  # Print the string format
-            
             if str(reminder_str) == str(now_str):
                 channel = discord.utils.find(lambda c: c.name=='general', self.bot.get_all_channels())
                 if channel:
-                    await channel.send(f"Reminder for {r['ctx'].author.mention} in 2 hours!")
+                    await channel.send(f"@everyone Reminder about '{r['name']}' in 2 hours!")
                 else:
                     print("General channel not found!")
 
