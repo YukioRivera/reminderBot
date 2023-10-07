@@ -4,14 +4,15 @@ A Discord bot designed to set reminders for users in a server.
 
 ## Features
 
-- Set reminders with the `set [time]` command.
-- Check current reminders with the `check` command.
-- Automatic notifications 24 hours and 2 hours before the set time.
+- Set reminders with the `!set [date] [time] [reminder name]` command.
+- List all reminders with the `!list` command.
+- Automatic notifications 2 hours before and at the exact set time.
 
 ## Prerequisites
 
-- Python 3.8 or higher.
+- Python 3.9 or higher.
 - A Discord account and a registered [Discord application](https://discord.com/developers/applications).
+- `pytz` library for timezone handling.
 
 ## Installation
 
@@ -82,10 +83,11 @@ A Discord bot designed to set reminders for users in a server.
 
 1. **Set a Reminder**:
    ```bash
-   !set [time in HH:MM format]
+   !set [date in YYYY-MM-DD format] [time in HH:MM format] [reminder name]
+   Example: !set 2023-10-12 16:00 Jira Meeting
    ```
 
-2. **Check Current Reminders**:
+2. **List All Reminders**:
    ```bash
-   !check
+   !list
    ```
