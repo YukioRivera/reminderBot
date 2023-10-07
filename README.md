@@ -84,6 +84,7 @@ A Discord bot designed to set reminders for users in a server.
 1. **Set a Reminder**:
    ```bash
    !set [date in YYYY-MM-DD format] [time in HH:MM format] [reminder name]
+   Example: !set 2023-10-12 16:00 Jira Meeting
    ```
 
 2. **List All Reminders**:
