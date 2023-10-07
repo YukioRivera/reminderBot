@@ -12,7 +12,7 @@ class ReminderManager:
         try:
             # Convert the date and time strings to a datetime object
             reminder_datetime = datetime.strptime(f"{date} {time}", '%Y-%m-%d %H:%M')
-            self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime, 'name': name})
+            self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime, 'name': name, 'guild_id': ctx.guild.id})
             await ctx.send(f"Reminder '{name}' set for {reminder_datetime.strftime('%Y-%m-%d %H:%M')}!")
         except ValueError:
             await ctx.send("Invalid date or time format. Please use YYYY-MM-DD HH:MM format.")
@@ -25,35 +25,44 @@ class ReminderManager:
         reminder_list = "\n".join([f"'{r['name']}' on {r['datetime'].strftime('%B %d, %Y at %H:%M')}" for r in self.reminders])
         await ctx.send(f"Reminders:\n{reminder_list}")
 
-
     @tasks.loop(minutes=1)
     async def check_reminders(self):
         print("Checking reminders...")  # Debug print
 
-        now = datetime.now().time()
-        now_plus_30_seconds = (datetime.combine(datetime.today(), now) + timedelta(seconds=30)).time()
-        now_minus_30_seconds = (datetime.combine(datetime.today(), now) - timedelta(seconds=30)).time()
+        now = datetime.now()
+        print(f"Current date and time: {now}")  # Debug print
 
-        for r in self.reminders:
+        reminders_to_remove = []
+
+        for r in self.reminders[:]:  # Iterate over a copy of the list
             reminder_datetime_minus_2_hours = r['datetime'] - timedelta(hours=2)
             reminder_time_minus_2_hours = reminder_datetime_minus_2_hours.time()
             reminder_time_exact = r['datetime'].time()
-                
-            print(f"Reminder time minus 2 hours: {reminder_time_minus_2_hours}")  # Print the time object
-            print(f"Current time: {now}")  # Print the time object
+            reminder_str = reminder_time_minus_2_hours.strftime('%H:%M')  # Convert reminder time to string format 'HH:MM'
+            
+            print(f"Reminder details: {r}")  # Debug print
+            print(f"Reminder time minus 2 hours: {reminder_str}")  # Debug print
+            print(f"Exact Reminder time: {reminder_time_exact.strftime('%H:%M')}")  # Debug print
+            
+            guild = self.bot.get_guild(r['guild_id'])
+            if guild:
+                channel = discord.utils.get(guild.channels, name='general')
+                if channel:
+                    if str(reminder_str) == now.strftime('%H:%M'):
+                        await channel.send(f"@everyone Reminder about '{r['name']}' in 2 hours!")
+                    # Check if the current time is within a minute of the reminder time
+                    elif abs((now - r['datetime']).total_seconds()) <= 60:
+                        await channel.send(f"@everyone It's time for '{r['name']}'!")
+                        reminders_to_remove.append(r)
+                else:
+                    print("General channel not found!")
+            else:
+                print(f"Guild with ID {r['guild_id']} not found!")
 
-            if reminder_time_minus_2_hours == now:
-                channel = discord.utils.find(lambda c: c.name=='general', self.bot.get_all_channels())
-                if channel:
-                    await channel.send(f"@everyone Reminder about '{r['name']}' in 2 hours!")
-                else:
-                    print("General channel not found!")
-            elif now_minus_30_seconds <= reminder_time_exact <= now_plus_30_seconds:
-                channel = discord.utils.find(lambda c: c.name=='general', self.bot.get_all_channels())
-                if channel:
-                    await channel.send(f"@everyone It's time for '{r['name']}'!")
-                else:
-                    print("General channel not found!")
+        # Remove the reminders that have been triggered
+        for r in reminders_to_remove:
+            self.reminders.remove(r)
+
 
 
 
