@@ -1,6 +1,3 @@
-Here's the updated `README.md` for your Discord Reminder Bot:
-
-```markdown
 # Discord Reminder Bot
 
 A Discord bot designed to set reminders for users in a server.
@@ -93,6 +90,3 @@ A Discord bot designed to set reminders for users in a server.
    ```bash
    !list
    ```
-```
-
-This updated README reflects the changes you've made to the bot, including the new command format and the usage of the `pytz` library.
