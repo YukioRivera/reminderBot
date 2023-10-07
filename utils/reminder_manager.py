@@ -2,32 +2,27 @@ from datetime import datetime, timedelta
 from discord.ext import tasks
 import discord
 
-
 class ReminderManager:
 
     def __init__(self, bot):
         self.reminders = []
         self.bot = bot
 
-    async def create_reminder(self, ctx, time):
+    async def create_reminder(self, ctx, date, time):
         try:
-            # Convert the time string to a datetime object
-            reminder_time = datetime.strptime(time, '%H:%M').time()
-            self.reminders.append({'ctx': ctx, 'time': reminder_time})
-            await ctx.send(f"Reminder set for {time}!")
+            # Convert the date and time strings to a datetime object
+            reminder_datetime = datetime.strptime(f"{date} {time}", '%Y-%m-%d %H:%M')
+            self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime})
+            await ctx.send(f"Reminder set for {reminder_datetime.strftime('%Y-%m-%d %H:%M')}!")
         except ValueError:
-            await ctx.send("Invalid time format. Please use HH:MM format.")
-
-
+            await ctx.send("Invalid date or time format. Please use YYYY-MM-DD HH:MM format.")
 
     async def list_reminders(self, ctx):
         if not self.reminders:
-            # ctx.send("No reminders set.")
             await ctx.send("No reminders set.")
             return
-        
-        reminder_list = "\n".join([f"{r['time'].strftime('%H:%M')} for {r['ctx'].author.name}" for r in self.reminders])
-        # ctx.send(f"Reminders:\n{reminder_list}")
+            
+        reminder_list = "\n".join([f"{r['datetime'].strftime('%B %d, %Y at %H:%M')} for {r['ctx'].author.name}" for r in self.reminders])
         await ctx.send(f"Reminders:\n{reminder_list}")
 
 
@@ -35,11 +30,12 @@ class ReminderManager:
     async def check_reminders(self):
         print("Checking reminders...")  # Debug print
 
-        now = datetime.now().time()
+        now = datetime.now()
         now_str = now.strftime('%H:%M')  # Convert current time to string format 'HH:MM'
 
         for r in self.reminders:
-            reminder_time_minus_2_hours = (datetime.combine(datetime.today(), r['time']) - timedelta(hours=2)).time()
+            reminder_datetime_minus_2_hours = r['datetime'] - timedelta(hours=2)
+            reminder_time_minus_2_hours = reminder_datetime_minus_2_hours.time()
             reminder_str = reminder_time_minus_2_hours.strftime('%H:%M')  # Convert reminder time to string format 'HH:MM'
             
             print(f"Reminder time minus 2 hours: {reminder_str}")  # Print the string format

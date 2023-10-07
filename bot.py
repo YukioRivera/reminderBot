@@ -24,8 +24,9 @@ async def on_ready():
     reminder_manager.start_loop()
 
 @bot.command()
-async def set(ctx, time):
-    await reminder_manager.create_reminder(ctx, time)
+async def set(ctx, date, time):
+    await reminder_manager.create_reminder(ctx, date, time)
+
 
 @bot.command() 
 async def list(ctx):
