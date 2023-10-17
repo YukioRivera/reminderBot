@@ -1,7 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from discord.ext import tasks
+from timezonefinder import TimezoneFinder
+from geopy.geocoders import Nominatim
 import discord
 import pytz  # Import the pytz library
+import geopy.geocoders
+import certifi
+import ssl
 
 class ReminderManager:
 
@@ -9,6 +14,7 @@ class ReminderManager:
         self.reminders = []
         self.bot = bot
         self.timezone = pytz.timezone('US/Pacific')  # Set the timezone to PST
+        self.ssl_context = ssl._create_unverified_context(cafile=certifi.where())
 
     async def create_reminder(self, ctx, date, time, name):
         try:
@@ -26,6 +32,34 @@ class ReminderManager:
             
         reminder_list = "\n".join([f"'{r['name']}' on {r['datetime'].strftime('%B %d, %Y at %H:%M')} PST" for r in self.reminders])
         await ctx.send(f"Reminders:\n{reminder_list}")
+    
+    # Sets time zone according to user input (City, State, Country)
+    async def set_timezone(self, ctx, location_name):
+        # SSL certificate used in location api call
+        geopy.geocoders.options.default_ssl_context = self.ssl_context
+        geolocator = Nominatim(scheme="https", user_agent="reminderBot")
+
+        # Gets Latitude and Longitude
+        location = geolocator.geocode(location_name)
+
+        if location:
+            tf = TimezoneFinder()
+
+            # Gets timezone from provided coordinates
+            timezone_str = tf.timezone_at(lng= location.longitude, lat=location.latitude)
+
+            if timezone_str:
+                user_timezone = pytz.timezone(timezone_str)
+
+                self.timezone = user_timezone
+
+                # Sets time zone according to the utc
+                local_time = datetime.now(self.timezone).strftime('%Y-%m-%d %H:%M')
+                await ctx.send(f"New timezone set! Your current time is: {local_time}\nTimezone location: {timezone_str}")
+            else:
+                await ctx.send("Timezone information not found")
+        else:
+            await ctx.send("Location not found. Please check input")
 
     @tasks.loop(minutes=1)
     async def check_reminders(self):
