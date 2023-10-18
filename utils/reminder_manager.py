@@ -19,11 +19,32 @@ class ReminderManager:
     async def create_reminder(self, ctx, date, time, name):
         try:
             # Convert the date and time strings to a datetime object in PST
-            reminder_datetime = self.timezone.localize(datetime.strptime(f"{date} {time}", '%Y-%m-%d %H:%M'))
-            self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime, 'name': name, 'guild_id': ctx.guild.id})
-            await ctx.send(f"Reminder '{name}' set for {reminder_datetime.strftime('%Y-%m-%d %H:%M')} PST!")
+            today = datetime.today()
+
+            # If only month and date is inputed
+            if(len(date) == 5):
+                date = str(today.year) + "-" + date
+            
+            temp = date.split("-")
+            input_date = [int(i) for i in temp]
+
+            if (today.year > input_date[0]):
+                await ctx.send(f"Check the year {input_date}")
+            elif (today.month > input_date[1]):
+                await ctx.send(f"Check the Month")
+            elif(today.month == input_date[1]) and (today.day > input_date[2]):
+                await ctx.send(f"Check the date")
+            else:
+                reminder_datetime = self.timezone.localize(datetime.strptime(f"{date} {time}", '%Y-%m-%d %H:%M'))
+                self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime, 'name': name, 'guild_id': ctx.guild.id})
+                await ctx.send(f"Reminder '{name}' set for {reminder_datetime.strftime('%Y-%m-%d %H:%M')} PST!")
+                 
+            
+            # reminder_datetime = self.timezone.localize(datetime.strptime(f"{date} {time}", '%Y-%m-%d %H:%M'))
+            # self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime, 'name': name, 'guild_id': ctx.guild.id})
+            # await ctx.send(f"Reminder '{name}' set for {reminder_datetime.strftime('%Y-%m-%d %H:%M')} PST!")
         except ValueError:
-            await ctx.send("Invalid date or time format. Please use YYYY-MM-DD HH:MM format.")
+            await ctx.send(f"Invalid date or time format. Please use YYYY-MM-DD HH:MM format.")
 
     async def list_reminders(self, ctx):
         if not self.reminders:
