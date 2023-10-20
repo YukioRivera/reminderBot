@@ -85,6 +85,43 @@ class ReminderManager:
         else:
             await ctx.send("Location not found. Please check input")
 
+    # Used to remove a reminder in list
+    async def remove(self, ctx, name):
+        # If list is empty
+        if not self.reminders:
+            await ctx.send("No reminders set.")
+            return
+        
+        # Checks for multiple similarly named reminders
+        reminderCount = [r for r in self.reminders if r['name'] == name]
+
+        # removes reminder
+        if len(reminderCount) == 1:
+            self.reminders.remove(reminderCount[0])
+            await ctx.send("Removed reminder")
+            return
+        
+        # Array of all similaryly named reminders
+        reminder_list = "\n".join([f"{i+1}. '{r['name']}' on {r['datetime'].strftime('%B %d, %Y at %H:%M')} PST" for i, r in enumerate(reminderCount)])
+
+        # Takes user input
+        message = await ctx.send(f"Multiple reminders found with the name '{name}'. Which one would you like to remove?\n{reminder_list}\nReply with the corresponding number.")
+        
+        # Checks the user input
+        def check(message):
+            return message.author == ctx.author and message.content.isdigit() and 1 <= int(message.content) <= len(reminderCount)
+        
+        try:
+            reply = await self.bot.wait_for('message', timeout = 60.0, check = check)
+        except TimeoutError:
+            await ctx.send("Timed-out. Please try again")
+            return
+        
+        # Deletes reminder
+        index = int(reply.content) -1
+        self.reminders.remove(reminderCount[index])
+        await ctx.send('Removed reminder')
+
     @tasks.loop(minutes=1)
     async def check_reminders(self):
         print("Checking reminders...")  # Debug print

@@ -53,6 +53,10 @@ async def list(ctx):
 @bot.command(brief="Updates timezone")
 async def set_timezone(ctx, location_name):
     await reminder_manager.set_timezone(ctx, location_name)
+
+@bot.command(brief="Removes reminder from the list")
+async def remove(ctx, name):
+    await reminder_manager.remove(ctx, name)
     
 @bot.event
 async def on_command_error(ctx, error):
