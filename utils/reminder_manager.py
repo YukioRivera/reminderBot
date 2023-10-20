@@ -10,18 +10,21 @@ class ReminderManager:
         self.bot = bot
         self.timezone = pytz.timezone('US/Pacific')  # Set the timezone to PST
 
+    # Creates a reminder based on date and time
     async def create_reminder(self, ctx, date, time, name):
         try:
-            # Convert the date and time strings to a datetime object in PST
+            # Convert the date and time strings to a datetime object
             today = datetime.today()
 
             # If only month and date is inputed
             if(len(date) == 5):
                 date = str(today.year) + "-" + date
             
+            # Converts date input to integers
             temp = date.split("-")
             input_date = [int(i) for i in temp]
 
+            # Validates date input
             if (today.year > input_date[0]):
                 await ctx.send(f"Check the year {input_date}")
             elif (today.month > input_date[1]):
@@ -32,19 +35,19 @@ class ReminderManager:
                 reminder_datetime = self.timezone.localize(datetime.strptime(f"{date} {time}", '%Y-%m-%d %H:%M'))
                 self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime, 'name': name, 'guild_id': ctx.guild.id})
                 await ctx.send(f"Reminder '{name}' set for {reminder_datetime.strftime('%Y-%m-%d %H:%M')} PST!")
-                 
-            
-            # reminder_datetime = self.timezone.localize(datetime.strptime(f"{date} {time}", '%Y-%m-%d %H:%M'))
-            # self.reminders.append({'ctx': ctx, 'datetime': reminder_datetime, 'name': name, 'guild_id': ctx.guild.id})
-            # await ctx.send(f"Reminder '{name}' set for {reminder_datetime.strftime('%Y-%m-%d %H:%M')} PST!")
+
         except ValueError:
             await ctx.send(f"Invalid date or time format. Please use YYYY-MM-DD HH:MM format.")
 
+    # Lists all reminders in order
     async def list_reminders(self, ctx):
         if not self.reminders:
             await ctx.send("No reminders set.")
             return
-            
+        
+        # Sorts reminders based on date and time
+        self.reminders.sort(key = lambda x: x['datetime'], reverse=False)
+        
         reminder_list = "\n".join([f"'{r['name']}' on {r['datetime'].strftime('%B %d, %Y at %H:%M')} PST" for r in self.reminders])
         await ctx.send(f"Reminders:\n{reminder_list}")
 
