@@ -1,5 +1,7 @@
 discord.py
 pytz
+geopy
+certifi
 timezonefinder
 certifi
 geopy
