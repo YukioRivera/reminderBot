@@ -52,11 +52,14 @@ async def set(ctx, date, time, name):
 async def list(ctx):
     await reminder_manager.list_reminders(ctx)
 
+
 @bot.command(brief="Updates time zone")
+
 async def set_timezone(ctx, location_name):
     await reminder_manager.set_timezone(ctx, location_name)
 
 @bot.command(brief="Removes reminder from the list")
+
 async def delete(ctx, name):
     await reminder_manager.delete(ctx, name)
     

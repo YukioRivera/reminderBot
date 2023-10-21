@@ -139,6 +139,7 @@ class ReminderManager:
         # Deletes reminder
         index = int(reply.content) -1
         self.reminders.remove(reminderCount[index])
+
         embed= discord.Embed(title="Delete", description=f"Reminder '{name}' removed!", color=int(styles['success']['color'], 16))
         await ctx.send(embed=embed)
 

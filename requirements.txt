@@ -3,3 +3,5 @@ pytz
 geopy
 certifi
 timezonefinder
+certifi
+geopy
