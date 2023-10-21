@@ -9,6 +9,7 @@ WORKDIR /app
 # Copy the bot script, requirements file, and the utils directory
 COPY bot.py .
 COPY requirements.txt .
+COPY styles.json /app/styles.json
 COPY utils/reminder_manager.py ./utils/
 
 # Install the required packages

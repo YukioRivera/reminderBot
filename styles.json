@@ -1,0 +1,15 @@
+{
+    "reminder": {
+      "color": "0x4169E1"
+    },
+    "error": {
+      "color": "0xe74c3c"
+    },
+    "success": {
+      "color": "0x2ecc71"
+    },
+    "user_input": {
+      "color": "0x32CD32"
+    }
+  }
+  
