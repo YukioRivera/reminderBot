@@ -26,6 +26,8 @@ class CustomHelpCommand(commands.HelpCommand):
                 help_embed.add_field(name=f"!{command.name}", value=f"{command.brief}\nUsage: !list", inline=False)
             elif command.name == "set_timezone":
                 help_embed.add_field(name=f"!{command.name}", value=f"{command.brief}\nUsage: !set_timezone City, State, Country(optional)", inline=False)
+            elif command.name == "delete":
+                help_embed.add_field(name=f"!{command.name}", value=f"{command.brief}\nUsage: !remove 'Name of the reminder'", inline=False)
             else:
                 help_embed.add_field(name=f"!{command.name}", value=command.brief, inline=False)
         
@@ -50,9 +52,16 @@ async def set(ctx, date, time, name):
 async def list(ctx):
     await reminder_manager.list_reminders(ctx)
 
-@bot.command(brief="Updates timezone")
+
+@bot.command(brief="Updates time zone")
+
 async def set_timezone(ctx, location_name):
     await reminder_manager.set_timezone(ctx, location_name)
+
+@bot.command(brief="Removes reminder from the list")
+
+async def delete(ctx, name):
+    await reminder_manager.delete(ctx, name)
     
 @bot.event
 async def on_command_error(ctx, error):
