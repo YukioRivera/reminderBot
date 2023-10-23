@@ -49,9 +49,13 @@ A Discord bot designed to set reminders for users in a server.
    ```
 
 3. **Run the Bot**:
-   - Replace `YourActualBotToken` with your bot's token.
+   - Run the command. Replace `YourActualBotToken` with your bot's token.
    ```bash
-   DISCORD_BOT_TOKEN=YourActualBotToken python bot.py
+   $env:DISCORD_BOT_TOKEN=YourActualBotToken
+   ```
+   - Then simply run the Bot with Python.
+   ```bash
+   python bot.py
    ```
 
 ## Inviting the Bot to Your Server
@@ -68,6 +72,11 @@ A Discord bot designed to set reminders for users in a server.
 
 3. **Verify Bot's Presence**:
    - After authorizing, check your Discord server. The bot should now be a member of the server and ready to accept commands.
+
+4. **Give Bot Permissions**:
+   - Back in the Application menu, on the left select "Bot"
+   - Enable the Presence Intent, Server Members Intent, and Message Content Intent radio buttons.
+   - Scrolling down to Bot Permissions and enable relevant permissions (or Administrator to keep things simple).
 
 ## Secure Your Bot Token
 
